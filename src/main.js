@@ -1,7 +1,9 @@
 import { createIcons, Sprout, Menu, X, ArrowUpRight, ArrowRight, ArrowDown, ArrowUp, ClipboardList, ShieldCheck, UsersRound, HeartHandshake, Network, Mail, Linkedin, Copy } from 'lucide';
 import { createInquiry, createMailto } from './inquiry.js';
+import siteContent from 'virtual:site-content';
 import './style.css';
 
+const { site, inquiry: inquiryCopy } = siteContent;
 const icons = { Sprout, Menu, X, ArrowUpRight, ArrowRight, ArrowDown, ArrowUp, ClipboardList, ShieldCheck, UsersRound, HeartHandshake, Network, Mail, Linkedin, Copy };
 const renderIcons = () => createIcons({ icons, attrs: { 'stroke-width': 1.7 } });
 renderIcons();
@@ -11,8 +13,8 @@ const nav = document.querySelector('#main-nav');
 
 function setMenu(isOpen) {
   menuToggle.setAttribute('aria-expanded', String(isOpen));
-  menuToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
-  menuToggle.title = isOpen ? 'Close navigation' : 'Open navigation';
+  menuToggle.setAttribute('aria-label', isOpen ? site.close_navigation_label : site.open_navigation_label);
+  menuToggle.title = isOpen ? site.close_navigation_label : site.open_navigation_label;
   menuToggle.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}" aria-hidden="true"></i>`;
   nav.classList.toggle('is-open', isOpen);
   renderIcons();
@@ -36,7 +38,7 @@ const form = document.querySelector('#inquiry-form');
 const inquiryDialog = document.querySelector('#inquiry-dialog');
 const draft = document.querySelector('#inquiry-draft');
 const copyStatus = document.querySelector('#copy-status');
-let contactEmail = '';
+let contactEmail = siteContent.contact.email;
 
 document.querySelectorAll('[data-service]').forEach((link) => {
   link.addEventListener('click', () => {
@@ -47,20 +49,20 @@ document.querySelectorAll('[data-service]').forEach((link) => {
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   for (const field of [form.elements.name, form.elements.message]) {
-    field.setCustomValidity(field.value.trim() ? '' : 'Please enter a value, not only spaces.');
+    field.setCustomValidity(field.value.trim() ? '' : inquiryCopy.whitespace_error);
     if (!field.reportValidity()) return;
   }
 
-  const inquiry = createInquiry(Object.fromEntries(new FormData(form)));
+  const inquiry = createInquiry(Object.fromEntries(new FormData(form)), inquiryCopy);
   draft.value = inquiry.body;
   copyStatus.textContent = '';
   const emailLink = document.querySelector('#email-draft');
   emailLink.hidden = !contactEmail;
   if (contactEmail) {
     emailLink.href = createMailto(contactEmail, inquiry);
-    document.querySelector('#delivery-status').textContent = 'Your draft is ready. No message has been sent.';
+    document.querySelector('#delivery-status').textContent = inquiryCopy.ready_status;
   } else {
-    document.querySelector('#delivery-status').textContent = "A contact email hasn't been added yet. Your message has not been sent.";
+    document.querySelector('#delivery-status').textContent = inquiryCopy.email_missing;
   }
   inquiryDialog.showModal();
 });
@@ -72,11 +74,11 @@ for (const field of [form.elements.name, form.elements.message]) {
 document.querySelector('#copy-inquiry').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(draft.value);
-    copyStatus.textContent = 'Inquiry copied. Your message has not been sent.';
+    copyStatus.textContent = inquiryCopy.copied_status;
   } catch {
     draft.focus();
     draft.select();
-    copyStatus.textContent = 'Clipboard access is unavailable. Your draft is selected for copying.';
+    copyStatus.textContent = inquiryCopy.clipboard_unavailable;
   }
 });
 
@@ -116,7 +118,7 @@ async function loadContact() {
     placeholder.replaceWith(emailAnchor);
     renderIcons();
   } catch {
-    contactEmail = '';
+    return;
   }
 }
 

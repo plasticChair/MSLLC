@@ -103,9 +103,23 @@ npx wrangler deploy --dry-run
 ```
 
 Tests cover Worker routing, absent/invalid/public contact configuration, inquiry
-formatting, and safe mailto encoding. Static assets include security headers.
+formatting, safe mailto encoding, and complete Cloudflare runtime platform entries
+in the dependency lockfile. Static assets include security headers.
 The site supports mobile navigation, visible keyboard focus, a skip link, native
 accessible dialogs, and reduced-motion preferences.
+
+### Cloudflare Dependency Installation
+
+Workers Builds installs dependencies with `npm ci`. Commit `package.json` and
+`package-lock.json` together. An `EUSAGE` error listing missing
+`@cloudflare/workerd-*` packages means the lockfile lacks optional platform
+entries, even if a cached local installation still builds successfully.
+
+The dependency regression test checks those entries. To regenerate an incomplete
+lockfile, use a clean temporary directory containing only `package.json` and run
+`npm install --package-lock-only`. Review dependency-version changes before
+replacing and committing the generated lockfile. A dry run alone may not catch
+missing optional entries; validate with an actual clean install in isolation.
 
 ## Editing
 

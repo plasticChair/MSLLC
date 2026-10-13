@@ -66,6 +66,7 @@ h1 > span { font-family: 'DM Sans', sans-serif; font-size: 19px; font-weight: 40
 .hero-tagline { font-family: var(--serif); font-size: 36px; line-height: 1.22; margin-bottom: 24px; }
 em { font-weight: 400; color: #617a51; }
 .hero-description { max-width: 408px; font-size: 14px; line-height: 1.9; color: #526253; margin-bottom: 29px; }
+.hero-description > :last-child { margin-bottom: 0; }
 .hero-actions { display: flex; align-items: center; gap: 29px; }
 .hero-footnote { position: absolute; bottom: 28px; left: 0; display: flex; align-items: center; gap: 10px; font-size: 10px; color: #5a6d53; }
 .hero-footnote svg { height: 17px; width: 17px; }
