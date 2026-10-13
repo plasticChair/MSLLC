@@ -1,0 +1,21 @@
+{
+  "name": "shermanator-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "worker:dev": "npm run build && wrangler dev --ip 127.0.0.1",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "lucide": "^0.468.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0",
+    "wrangler": "^4.40.0"
+  }
+}
