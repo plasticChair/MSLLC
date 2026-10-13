@@ -239,7 +239,7 @@ h3 { font-size: 21px; line-height: 1.4; font-weight: 500; margin-bottom: 17px; }
   .services-note svg { margin-top: 1px; }
   .about-grid { grid-template-columns: 1fr; gap: 35px; }
   .about-visual { max-width: none; }
-  .about-visual > img { aspect-ratio: 5 / 3; object-position: center 48%; }
+  .about-visual > img { aspect-ratio: auto; object-fit: contain; }
   .visual-caption { padding: 20px; }
   .visual-caption span { font-size: 20px; }
   .about-content h2 { font-size: 36px; }

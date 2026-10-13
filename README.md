@@ -2,7 +2,8 @@
 
 A bright, sage-green consulting website for Mary Sherman. Built with vanilla
 JavaScript, Vite, and lucide icons, and configured for Cloudflare Workers static
-assets. No database or third-party form service is needed.
+assets. Section content is edited in Markdown and rendered at build time.
+No database or third-party form service is needed. See [EDITING.md](EDITING.md).
 
 ## Content
 
@@ -25,8 +26,11 @@ npm install
 npm run dev
 ```
 
-Vite prints the preview URL, normally http://127.0.0.1:5173. The optional email is
-blank in Vite development mode. To test the actual Worker and production assets:
+Vite prints the preview URL, normally http://127.0.0.1:5173. Saving a content
+Markdown file refreshes the browser. On this machine, use the **Edit website
+(live preview)** VS Code task to start it with the portable runtime.
+Development mode uses the public email from `content/contact.md`, if configured.
+To test the actual Worker and production assets:
 
 ```sh
 npm run worker:dev
@@ -36,8 +40,9 @@ Wrangler normally serves http://127.0.0.1:8787. The workspace also includes a
 **Preview Cloudflare Worker** VS Code task using the portable Node runtime that
 was downloaded for this machine. Its absolute runtime path is machine-specific;
 replace the task command with `node` after installing Node normally or when
-moving to another machine. Build with `npm run build` before running that task
-after making changes.
+moving to another machine. Build with `npm run build` or the **Build website**
+task before running that preview. If CSS or JavaScript returns 404 after a
+rebuild, terminate and rerun the Worker preview to refresh its asset manifest.
 
 The portable runtime is outside the project, in
 `%TEMP%\mary-website-tools\node-v22.23.3-win-x64`. It was downloaded from nodejs.org
@@ -81,10 +86,11 @@ not contain account credentials and has not automatically been published.
 
 ## Add the Contact Email
 
-Set `vars.CONTACT_EMAIL` in `wrangler.jsonc` to Mary's approved **public** email
-address, then redeploy. This is public contact information, not a secret. Keeping
-it in configuration makes it survive deployments; a dashboard-only variable can
-be overwritten by a later Wrangler deployment.
+Set `email` in `content/contact.md` to Mary's approved **public** email, or keep
+it empty for a placeholder. A valid nonempty `vars.CONTACT_EMAIL` in
+`wrangler.jsonc` overrides it on the Worker. Both are public contact information,
+not secrets. A dashboard-only Worker variable can be overwritten by a later
+Wrangler deployment.
 
 The form prepares a draft and never submits or stores inquiry details. While
 the email is blank, visitors can copy their inquiry and open Mary's LinkedIn.
@@ -103,8 +109,9 @@ npx wrangler deploy --dry-run
 ```
 
 Tests cover Worker routing, absent/invalid/public contact configuration, inquiry
-formatting, safe mailto encoding, and complete Cloudflare runtime platform entries
-in the dependency lockfile. Static assets include security headers.
+formatting, safe mailto encoding, Markdown rendering and validation, synchronized
+service options, and complete Cloudflare runtime platform entries in the
+dependency lockfile. Static assets include security headers.
 The site supports mobile navigation, visible keyboard focus, a skip link, native
 accessible dialogs, and reduced-motion preferences.
 
@@ -123,7 +130,11 @@ missing optional entries; validate with an actual clean install in isolation.
 
 ## Editing
 
-- `index.html`: biography, services, navigation, metadata, and form labels.
+- `content/*.md`: section text, branding, metadata, photos, and form labels.
+- `content/services/*.md`: individual services and their inquiry options.
+- [EDITING.md](EDITING.md): file map and step-by-step editing guide.
+- `index.html`: shared layout template; ordinary content edits do not go here.
+- `build/content.js` and `vite.config.js`: build-time content rendering and live reload.
 - `src/style.css`: palette, typography, layouts, and responsive breakpoints.
 - `src/main.js`: navigation, dialogs, clipboard, and public contact loading.
 - `src/inquiry.js`: draft formatting and mailto construction.
@@ -132,18 +143,16 @@ missing optional entries; validate with an actual clean install in isolation.
 
 Before publishing, confirm the final business name, Mary's approval of the
 service copy, contact details, and the domain. Add an existing website only when
-an approved URL is available. A real portrait can replace the supporting nature
-image, but none is presented as a photograph of Mary.
+an approved URL is available. The current photo and caption are preserved in
+`content/about.md` and can be changed there.
 
 ## Assets and Privacy
 
-Nature photographs are locally hosted downloads from Unsplash under the
-[Unsplash license](https://unsplash.com/license):
+The decorative hero landscape is locally hosted from
+https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05 under the
+[Unsplash license](https://unsplash.com/license). The About photo is provided by
+the site owner; confirm permission to publish any replacement photo.
 
-- Hero: https://unsplash.com/photos/3b5ec3a7fe05 (image ID photo-1470071459604-3b5ec3a7fe05).
-- Plant: https://images.unsplash.com/photo-1485955900006-10f4d324d411.
-
-These are decorative imagery, not Mary's photograph or workplace. Replace them
-with approved brand photography as desired. DM Sans and Fraunces are loaded
-through Google Fonts. Google and Cloudflare can process standard requests;
-the site includes no analytics, tracking cookies, or submission storage.
+DM Sans and Fraunces are loaded through Google Fonts. Google and Cloudflare can
+process standard requests; the site includes no analytics, tracking cookies, or
+submission storage. Markdown files are source content, not a public admin panel.
